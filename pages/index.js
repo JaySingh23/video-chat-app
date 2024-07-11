@@ -1,16 +1,34 @@
-import { useSocket } from "@/context/socket"
-import { useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation'
+import { Button } from "@/components/ui/button"
+
+import styles from '@/styles/home.module.css'
+import { useState } from 'react';
 
 export default function Home() {
-  const socket = useSocket();
+  const router = useRouter()
+  const [roomId, setRoomId] = useState('')
 
-  useEffect(() => {
-    socket?.on("connect", () => {
-      console.log(`Connected to the server with id ${socket.id}`);
-    })
-  }, [socket]);
+  const createAndJoin = () => {
+    const roomId = uuidv4()
+    router.push(`/${roomId}`)
+  }
 
+  const joinRoom = () => {
+    if (roomId) router.push(`/${roomId}`)
+    else {
+      alert("Please provide a valid room id")
+    }
+  }
   return (
-    <h1>Welcome</h1>
+    <div className={styles.homeContainer}>
+        <h1 className = {styles.title}>Video Chat App</h1>
+        <div className={styles.enterRoom}>
+          <input className={styles.input} placeholder='Enter Room ID' value={roomId} onChange={(e) => setRoomId(e?.target?.value)}/>
+          <Button variant="outline" onClick={joinRoom}>Join Room</Button>
+        </div>
+        <span  className={styles.separatorText} >--------------- OR ---------------</span>
+        <Button variant="outline" onClick={createAndJoin}>Create a new room</Button>
+    </div>
   )
 }
